@@ -135,24 +135,26 @@ function GroupView() {
           <Link to="/app/group/$groupId/history" params={{ groupId }}>
             <Button variant="ghost" size="icon" aria-label="Histórico"><History className="h-5 w-5"/></Button>
           </Link>
-          <Sheet open={shareOpen} onOpenChange={setShareOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Compartilhar"><Share2 className="h-5 w-5"/></Button>
-            </SheetTrigger>
-            <SheetContent side="bottom" className="rounded-t-3xl">
-              <SheetHeader><SheetTitle>Convidar para "{group.name}"</SheetTitle></SheetHeader>
-              <div className="mt-4 space-y-4">
-                <div className="rounded-2xl bg-accent p-5 text-center">
-                  <div className="text-xs uppercase tracking-wide text-accent-foreground/70">Código do grupo</div>
-                  <div className="mt-2 text-4xl font-mono font-bold tracking-[0.3em]">{group.invite_code}</div>
+          {isOwner && (
+            <Sheet open={shareOpen} onOpenChange={(o) => { setShareOpen(o); if (o) loadInviteCode(); }}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Compartilhar"><Share2 className="h-5 w-5"/></Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="rounded-t-3xl">
+                <SheetHeader><SheetTitle>Convidar para "{group.name}"</SheetTitle></SheetHeader>
+                <div className="mt-4 space-y-4">
+                  <div className="rounded-2xl bg-accent p-5 text-center">
+                    <div className="text-xs uppercase tracking-wide text-accent-foreground/70">Código do grupo</div>
+                    <div className="mt-2 text-4xl font-mono font-bold tracking-[0.3em]">{inviteCode ?? "..."}</div>
+                  </div>
+                  <Button onClick={copyCode} disabled={!inviteCode} variant="outline" className="w-full h-12 rounded-xl">
+                    {copied ? <><Check className="h-4 w-4 mr-2"/>Copiado!</> : <><Copy className="h-4 w-4 mr-2"/>Copiar link de convite</>}
+                  </Button>
+                  <p className="text-xs text-center text-muted-foreground">Somente o dono do grupo pode ver e compartilhar o código.</p>
                 </div>
-                <Button onClick={copyCode} variant="outline" className="w-full h-12 rounded-xl">
-                  {copied ? <><Check className="h-4 w-4 mr-2"/>Copiado!</> : <><Copy className="h-4 w-4 mr-2"/>Copiar link de convite</>}
-                </Button>
-                <p className="text-xs text-center text-muted-foreground">Envie o código ou o link para quem quiser adicionar ao grupo.</p>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          )}
         </div>
       </header>
 
