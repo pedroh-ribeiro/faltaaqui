@@ -9,38 +9,153 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as JoinCodeRouteImport } from './routes/join.$code'
+import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedAppJoinRouteImport } from './routes/_authenticated/app.join'
+import { Route as AuthenticatedAppGroupNewRouteImport } from './routes/_authenticated/app.group.new'
+import { Route as AuthenticatedAppGroupGroupIdIndexRouteImport } from './routes/_authenticated/app.group.$groupId.index'
+import { Route as AuthenticatedAppGroupGroupIdHistoryRouteImport } from './routes/_authenticated/app.group.$groupId.history'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JoinCodeRoute = JoinCodeRouteImport.update({
+  id: '/join/$code',
+  path: '/join/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppJoinRoute = AuthenticatedAppJoinRouteImport.update({
+  id: '/join',
+  path: '/join',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppGroupNewRoute =
+  AuthenticatedAppGroupNewRouteImport.update({
+    id: '/group/new',
+    path: '/group/new',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppGroupGroupIdIndexRoute =
+  AuthenticatedAppGroupGroupIdIndexRouteImport.update({
+    id: '/group/$groupId/',
+    path: '/group/$groupId/',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppGroupGroupIdHistoryRoute =
+  AuthenticatedAppGroupGroupIdHistoryRouteImport.update({
+    id: '/group/$groupId/history',
+    path: '/group/$groupId/history',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/app': typeof AuthenticatedAppRouteWithChildren
+  '/join/$code': typeof JoinCodeRoute
+  '/app/join': typeof AuthenticatedAppJoinRoute
+  '/app/group/new': typeof AuthenticatedAppGroupNewRoute
+  '/app/group/$groupId/history': typeof AuthenticatedAppGroupGroupIdHistoryRoute
+  '/app/group/$groupId/': typeof AuthenticatedAppGroupGroupIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/app': typeof AuthenticatedAppRouteWithChildren
+  '/join/$code': typeof JoinCodeRoute
+  '/app/join': typeof AuthenticatedAppJoinRoute
+  '/app/group/new': typeof AuthenticatedAppGroupNewRoute
+  '/app/group/$groupId/history': typeof AuthenticatedAppGroupGroupIdHistoryRoute
+  '/app/group/$groupId': typeof AuthenticatedAppGroupGroupIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
+  '/join/$code': typeof JoinCodeRoute
+  '/_authenticated/app/join': typeof AuthenticatedAppJoinRoute
+  '/_authenticated/app/group/new': typeof AuthenticatedAppGroupNewRoute
+  '/_authenticated/app/group/$groupId/history': typeof AuthenticatedAppGroupGroupIdHistoryRoute
+  '/_authenticated/app/group/$groupId/': typeof AuthenticatedAppGroupGroupIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/app'
+    | '/join/$code'
+    | '/app/join'
+    | '/app/group/new'
+    | '/app/group/$groupId/history'
+    | '/app/group/$groupId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/app'
+    | '/join/$code'
+    | '/app/join'
+    | '/app/group/new'
+    | '/app/group/$groupId/history'
+    | '/app/group/$groupId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/app'
+    | '/join/$code'
+    | '/_authenticated/app/join'
+    | '/_authenticated/app/group/new'
+    | '/_authenticated/app/group/$groupId/history'
+    | '/_authenticated/app/group/$groupId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  JoinCodeRoute: typeof JoinCodeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +163,87 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/join/$code': {
+      id: '/join/$code'
+      path: '/join/$code'
+      fullPath: '/join/$code'
+      preLoaderRoute: typeof JoinCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app': {
+      id: '/_authenticated/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AuthenticatedAppRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/join': {
+      id: '/_authenticated/app/join'
+      path: '/join'
+      fullPath: '/app/join'
+      preLoaderRoute: typeof AuthenticatedAppJoinRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/group/new': {
+      id: '/_authenticated/app/group/new'
+      path: '/group/new'
+      fullPath: '/app/group/new'
+      preLoaderRoute: typeof AuthenticatedAppGroupNewRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/group/$groupId/': {
+      id: '/_authenticated/app/group/$groupId/'
+      path: '/group/$groupId'
+      fullPath: '/app/group/$groupId/'
+      preLoaderRoute: typeof AuthenticatedAppGroupGroupIdIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/group/$groupId/history': {
+      id: '/_authenticated/app/group/$groupId/history'
+      path: '/group/$groupId/history'
+      fullPath: '/app/group/$groupId/history'
+      preLoaderRoute: typeof AuthenticatedAppGroupGroupIdHistoryRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
   }
 }
 
+interface AuthenticatedAppRouteChildren {
+  AuthenticatedAppJoinRoute: typeof AuthenticatedAppJoinRoute
+  AuthenticatedAppGroupNewRoute: typeof AuthenticatedAppGroupNewRoute
+  AuthenticatedAppGroupGroupIdHistoryRoute: typeof AuthenticatedAppGroupGroupIdHistoryRoute
+  AuthenticatedAppGroupGroupIdIndexRoute: typeof AuthenticatedAppGroupGroupIdIndexRoute
+}
+
+const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
+  AuthenticatedAppJoinRoute: AuthenticatedAppJoinRoute,
+  AuthenticatedAppGroupNewRoute: AuthenticatedAppGroupNewRoute,
+  AuthenticatedAppGroupGroupIdHistoryRoute:
+    AuthenticatedAppGroupGroupIdHistoryRoute,
+  AuthenticatedAppGroupGroupIdIndexRoute:
+    AuthenticatedAppGroupGroupIdIndexRoute,
+}
+
+const AuthenticatedAppRouteWithChildren =
+  AuthenticatedAppRoute._addFileChildren(AuthenticatedAppRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  JoinCodeRoute: JoinCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
