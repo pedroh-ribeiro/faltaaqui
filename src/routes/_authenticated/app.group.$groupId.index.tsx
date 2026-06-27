@@ -104,9 +104,16 @@ function GroupView() {
     await supabase.from("items").delete().eq("id", item.id);
   }
 
+  async function loadInviteCode() {
+    if (!isOwner || inviteCode) return;
+    const { data, error } = await supabase.rpc("get_group_invite_code", { _group_id: groupId });
+    if (error) { toast.error("Não foi possível carregar o código"); return; }
+    setInviteCode(data as string);
+  }
+
   async function copyCode() {
-    if (!group) return;
-    const url = `${window.location.origin}/join/${group.invite_code}`;
+    if (!inviteCode) return;
+    const url = `${window.location.origin}/join/${inviteCode}`;
     await navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
