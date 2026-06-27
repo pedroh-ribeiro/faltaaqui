@@ -24,7 +24,7 @@ type Item = {
   created_at: string;
 };
 
-type Group = { id: string; name: string; invite_code: string; owner_id: string };
+type Group = { id: string; name: string; owner_id: string };
 type Profile = { id: string; name: string };
 
 function GroupView() {
