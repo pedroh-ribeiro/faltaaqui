@@ -35,7 +35,7 @@ function Dashboard() {
     if (groupIds.length === 0) { setGroups([]); setLoading(false); return; }
 
     const { data: gs } = await supabase
-      .from("groups").select("id, name, owner_id, invite_code").in("id", groupIds);
+      .from("groups").select("id, name, owner_id").in("id", groupIds);
     const { data: items } = await supabase
       .from("items").select("group_id, status").in("group_id", groupIds);
     const { data: members } = await supabase
