@@ -13,7 +13,6 @@ type GroupRow = {
   id: string;
   name: string;
   owner_id: string;
-  invite_code: string;
   member_count: number;
   pending_count: number;
 };
