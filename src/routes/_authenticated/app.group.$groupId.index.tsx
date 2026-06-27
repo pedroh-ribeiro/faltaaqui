@@ -37,6 +37,8 @@ function GroupView() {
   const [open, setOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
+  const isOwner = !!(group && me && group.owner_id === me);
 
   useEffect(() => {
     let mounted = true;
