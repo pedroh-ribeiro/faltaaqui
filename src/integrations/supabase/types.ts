@@ -14,13 +14,144 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      group_members: {
+        Row: {
+          group_id: string
+          id: string
+          joined_at: string
+          user_id: string
+        }
+        Insert: {
+          group_id: string
+          id?: string
+          joined_at?: string
+          user_id: string
+        }
+        Update: {
+          group_id?: string
+          id?: string
+          joined_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      groups: {
+        Row: {
+          created_at: string
+          id: string
+          invite_code: string
+          name: string
+          owner_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invite_code: string
+          name: string
+          owner_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invite_code?: string
+          name?: string
+          owner_id?: string
+        }
+        Relationships: []
+      }
+      items: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string
+          group_id: string
+          id: string
+          name: string
+          purchased_at: string | null
+          purchased_by: string | null
+          quantity: string
+          status: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by: string
+          group_id: string
+          id?: string
+          name: string
+          purchased_at?: string | null
+          purchased_by?: string | null
+          quantity?: string
+          status?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string
+          group_id?: string
+          id?: string
+          name?: string
+          purchased_at?: string | null
+          purchased_by?: string | null
+          quantity?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "items_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          plan: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          name: string
+          plan?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          plan?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_group_member: {
+        Args: { _group_id: string; _user_id: string }
+        Returns: boolean
+      }
+      join_group_by_code: { Args: { _code: string }; Returns: string }
+      shares_group_with: {
+        Args: { _me: string; _other_user: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
