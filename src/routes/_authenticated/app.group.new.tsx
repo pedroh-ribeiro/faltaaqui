@@ -19,20 +19,30 @@ function NewGroup() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) return;
-    const { data, error } = await supabase
-      .from("groups").insert({ name, owner_id: u.user.id, invite_code: "" })
-      .select().single();
-    setLoading(false);
-    if (error) {
-      if (error.message.includes("free_plan_group_limit")) {
-        toast.error("Plano gratuito permite apenas 1 grupo. Faça upgrade para Premium.");
-      } else { toast.error(error.message); }
-      return;
+    try {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) {
+        toast.error("Usuário não autenticado. Faça login novamente.");
+        return;
+      }
+      const { data, error } = await supabase
+        .from("groups")
+        .insert({ name, owner_id: u.user.id, invite_code: "" })
+        .select()
+        .single();
+      if (error) {
+        if (error.message.includes("free_plan_group_limit")) {
+          toast.error("Plano gratuito permite apenas 1 grupo. Faça upgrade para Premium.");
+        } else {
+          toast.error(error.message);
+        }
+        return;
+      }
+      toast.success("Grupo criado!");
+      navigate({ to: "/app/group/$groupId", params: { groupId: data.id } });
+    } finally {
+      setLoading(false);
     }
-    toast.success("Grupo criado!");
-    navigate({ to: "/app/group/$groupId", params: { groupId: data.id } });
   }
 
   return (
