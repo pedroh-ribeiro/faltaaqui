@@ -20,15 +20,15 @@ function NewGroup() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) {
+      const { data: u, error: userError } = await supabase.auth.getUser();
+      if (userError || !u.user) {
         toast.error("Usuário não autenticado. Faça login novamente.");
         return;
       }
       const { data, error } = await supabase
         .from("groups")
-        .insert({ name, owner_id: u.user.id, invite_code: "" })
-        .select()
+        .insert({ name: name.trim(), owner_id: u.user.id })
+        .select("id")
         .single();
       if (error) {
         if (error.message.includes("free_plan_group_limit")) {
@@ -40,6 +40,8 @@ function NewGroup() {
       }
       toast.success("Grupo criado!");
       navigate({ to: "/app/group/$groupId", params: { groupId: data.id } });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível criar o grupo.");
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { ShoppingBasket, Plus, Users, LogOut, Crown, ChevronRight } from "lucide
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/app")({
-  component: Dashboard,
+  component: AppLayout,
 });
 
 type GroupRow = {
@@ -17,6 +17,16 @@ type GroupRow = {
   pending_count: number;
 };
 
+function AppLayout() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+
+  if (pathname !== "/app") {
+    return <Outlet />;
+  }
+
+  return <Dashboard />;
+}
+
 function Dashboard() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<{ name: string; plan: string } | null>(null);
@@ -24,30 +34,44 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   async function load() {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) return;
-    const { data: p } = await supabase.from("profiles").select("name, plan").eq("id", u.user.id).maybeSingle();
-    setProfile(p);
+    try {
+      const { data: u, error: userError } = await supabase.auth.getUser();
+      if (userError || !u.user) {
+        toast.error("Sessão expirada. Faça login novamente.");
+        navigate({ to: "/auth" });
+        return;
+      }
+      const { data: p, error: profileError } = await supabase.from("profiles").select("name, plan").eq("id", u.user.id).maybeSingle();
+      if (profileError) throw profileError;
+      setProfile(p);
 
-    const { data: memberships } = await supabase
-      .from("group_members").select("group_id").eq("user_id", u.user.id);
-    const groupIds = (memberships ?? []).map((m) => m.group_id);
-    if (groupIds.length === 0) { setGroups([]); setLoading(false); return; }
+      const { data: memberships, error: membershipsError } = await supabase
+        .from("group_members").select("group_id").eq("user_id", u.user.id);
+      if (membershipsError) throw membershipsError;
+      const groupIds = (memberships ?? []).map((m) => m.group_id);
+      if (groupIds.length === 0) { setGroups([]); return; }
 
-    const { data: gs } = await supabase
-      .from("groups").select("id, name, owner_id").in("id", groupIds);
-    const { data: items } = await supabase
-      .from("items").select("group_id, status").in("group_id", groupIds);
-    const { data: members } = await supabase
-      .from("group_members").select("group_id").in("group_id", groupIds);
+      const { data: gs, error: groupsError } = await supabase
+        .from("groups").select("id, name, owner_id").in("id", groupIds);
+      if (groupsError) throw groupsError;
+      const { data: items, error: itemsError } = await supabase
+        .from("items").select("group_id, status").in("group_id", groupIds);
+      if (itemsError) throw itemsError;
+      const { data: members, error: membersError } = await supabase
+        .from("group_members").select("group_id").in("group_id", groupIds);
+      if (membersError) throw membersError;
 
-    const rows: GroupRow[] = (gs ?? []).map((g) => ({
-      ...g,
-      member_count: (members ?? []).filter((m) => m.group_id === g.id).length,
-      pending_count: (items ?? []).filter((i) => i.group_id === g.id && i.status === "pending").length,
-    }));
-    setGroups(rows);
-    setLoading(false);
+      const rows: GroupRow[] = (gs ?? []).map((g) => ({
+        ...g,
+        member_count: (members ?? []).filter((m) => m.group_id === g.id).length,
+        pending_count: (items ?? []).filter((i) => i.group_id === g.id && i.status === "pending").length,
+      }));
+      setGroups(rows);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível carregar os grupos.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { load(); }, []);
