@@ -19,16 +19,22 @@ function JoinGroup() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { data, error } = await supabase.rpc("join_group_by_code", { _code: code.trim() });
-    setLoading(false);
-    if (error) {
-      const msg = error.message.includes("invalid_code") ? "Código inválido"
-        : error.message.includes("free_plan_member_limit") ? "Grupo cheio (plano gratuito)"
-        : error.message;
-      toast.error(msg); return;
+    try {
+      const cleanedCode = code.trim().toUpperCase();
+      const { data, error } = await supabase.rpc("join_group_by_code", { _code: cleanedCode });
+      if (error) {
+        const msg = error.message.includes("invalid_code") ? "Código inválido"
+          : error.message.includes("free_plan_member_limit") ? "Grupo cheio (plano gratuito)"
+          : error.message;
+        toast.error(msg); return;
+      }
+      toast.success("Entrou no grupo!");
+      navigate({ to: "/app/group/$groupId", params: { groupId: data as string } });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível entrar no grupo.");
+    } finally {
+      setLoading(false);
     }
-    toast.success("Entrou no grupo!");
-    navigate({ to: "/app/group/$groupId", params: { groupId: data as string } });
   }
 
   return (
