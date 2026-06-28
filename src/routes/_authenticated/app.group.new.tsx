@@ -27,7 +27,7 @@ function NewGroup() {
       }
       const { data, error } = await supabase
         .from("groups")
-        .insert({ name: name.trim(), owner_id: u.user.id })
+        .insert({ name: name.trim(), owner_id: u.user.id, invite_code: "" })
         .select("id")
         .single();
       if (error) {
