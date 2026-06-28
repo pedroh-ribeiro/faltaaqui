@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppJoinRouteImport } from './routes/_authenticated/app.join'
 import { Route as AuthenticatedAppGroupNewRouteImport } from './routes/_authenticated/app.group.new'
 import { Route as AuthenticatedAppGroupGroupIdIndexRouteImport } from './routes/_authenticated/app.group.$groupId.index'
@@ -42,6 +43,11 @@ const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
   id: '/app',
   path: '/app',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAppRoute,
 } as any)
 const AuthenticatedAppJoinRoute = AuthenticatedAppJoinRouteImport.update({
   id: '/join',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AuthenticatedAppRouteWithChildren
   '/join/$code': typeof JoinCodeRoute
   '/app/join': typeof AuthenticatedAppJoinRoute
+  '/app/': typeof AuthenticatedAppIndexRoute
   '/app/group/new': typeof AuthenticatedAppGroupNewRoute
   '/app/group/$groupId/history': typeof AuthenticatedAppGroupGroupIdHistoryRoute
   '/app/group/$groupId/': typeof AuthenticatedAppGroupGroupIdIndexRoute
@@ -80,9 +87,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/app': typeof AuthenticatedAppRouteWithChildren
   '/join/$code': typeof JoinCodeRoute
   '/app/join': typeof AuthenticatedAppJoinRoute
+  '/app': typeof AuthenticatedAppIndexRoute
   '/app/group/new': typeof AuthenticatedAppGroupNewRoute
   '/app/group/$groupId/history': typeof AuthenticatedAppGroupGroupIdHistoryRoute
   '/app/group/$groupId': typeof AuthenticatedAppGroupGroupIdIndexRoute
@@ -95,6 +102,7 @@ export interface FileRoutesById {
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/join/$code': typeof JoinCodeRoute
   '/_authenticated/app/join': typeof AuthenticatedAppJoinRoute
+  '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/group/new': typeof AuthenticatedAppGroupNewRoute
   '/_authenticated/app/group/$groupId/history': typeof AuthenticatedAppGroupGroupIdHistoryRoute
   '/_authenticated/app/group/$groupId/': typeof AuthenticatedAppGroupGroupIdIndexRoute
@@ -107,6 +115,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/join/$code'
     | '/app/join'
+    | '/app/'
     | '/app/group/new'
     | '/app/group/$groupId/history'
     | '/app/group/$groupId/'
@@ -114,9 +123,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
-    | '/app'
     | '/join/$code'
     | '/app/join'
+    | '/app'
     | '/app/group/new'
     | '/app/group/$groupId/history'
     | '/app/group/$groupId'
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app'
     | '/join/$code'
     | '/_authenticated/app/join'
+    | '/_authenticated/app/'
     | '/_authenticated/app/group/new'
     | '/_authenticated/app/group/$groupId/history'
     | '/_authenticated/app/group/$groupId/'
@@ -177,6 +187,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/': {
+      id: '/_authenticated/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/join': {
       id: '/_authenticated/app/join'
       path: '/join'
@@ -210,6 +227,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppJoinRoute: typeof AuthenticatedAppJoinRoute
+  AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppGroupNewRoute: typeof AuthenticatedAppGroupNewRoute
   AuthenticatedAppGroupGroupIdHistoryRoute: typeof AuthenticatedAppGroupGroupIdHistoryRoute
   AuthenticatedAppGroupGroupIdIndexRoute: typeof AuthenticatedAppGroupGroupIdIndexRoute
@@ -217,6 +235,7 @@ interface AuthenticatedAppRouteChildren {
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppJoinRoute: AuthenticatedAppJoinRoute,
+  AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppGroupNewRoute: AuthenticatedAppGroupNewRoute,
   AuthenticatedAppGroupGroupIdHistoryRoute:
     AuthenticatedAppGroupGroupIdHistoryRoute,
