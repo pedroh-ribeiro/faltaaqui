@@ -60,7 +60,7 @@ function AuthPage() {
         <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
           <ShoppingBasket className="h-5 w-5" />
         </div>
-        <span className="font-display font-bold">Tá Faltando</span>
+        <span className="font-display font-bold">Falta Aqui</span>
       </Link>
 
       <div className="mx-auto w-full max-w-sm flex-1 flex flex-col justify-center">

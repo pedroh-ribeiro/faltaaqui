@@ -14,7 +14,7 @@ function Landing() {
           <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
             <ShoppingBasket className="h-5 w-5" />
           </div>
-          <span className="font-display text-lg font-bold">Tá Faltando</span>
+          <span className="font-display text-lg font-bold">Falta Aqui</span>
         </div>
         <Link to="/auth"><Button variant="ghost" size="sm">Entrar</Button></Link>
       </header>
